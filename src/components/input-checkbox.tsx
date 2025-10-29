@@ -17,7 +17,7 @@ export const inputCheckBoxVariants = tv({
     variant: {
       default: `
         border-2 border-solid
-        border-border-primmary hover:border-border-active
+        border-border-primary hover:border-border-active
         checked:border-accent-brand checked:bg-accent-brand
         group-hover:checked:border-accent-brand-light
         group-hover:checked:bg-accent-brand-light
