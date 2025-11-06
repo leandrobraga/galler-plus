@@ -4,13 +4,14 @@ import Container from "../components/container";
 import ImageFilePreview from "../components/image-file-preview";
 import Skeleton from "../components/skeleton";
 import Text from "../components/text";
+import AlbumListSelectable from "../contexts/albums/components/albums-list-selectable";
 import PhotoNavigator from "../contexts/photos/components/photo-navigator";
 import type { Photo } from "../contexts/photos/models/photo";
-import AlbumListSelectable from "../contexts/albums/components/albums-list-selectable";
+import useAlbums from "../contexts/albums/hooks/use-albums";
 
 export default function PagePhotoDetail() {
   const { id } = useParams();
-
+  const { albums, isLoadingAlbums } = useAlbums();
   const isloadingPage = false;
   const photo = {
     id: "1",
@@ -56,12 +57,8 @@ export default function PagePhotoDetail() {
           </Text>
           <AlbumListSelectable
             photo={photo}
-            albums={[
-              { id: "1", title: "Album 1" },
-              { id: "2", title: "Album 2" },
-              { id: "3", title: "Album 3" },
-              { id: "4", title: "Album 4" },
-            ]}
+            albums={albums}
+            loading={isLoadingAlbums}
           />
         </div>
       </div>
