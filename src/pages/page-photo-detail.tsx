@@ -5,47 +5,46 @@ import ImageFilePreview from "../components/image-file-preview";
 import Skeleton from "../components/skeleton";
 import Text from "../components/text";
 import AlbumListSelectable from "../contexts/albums/components/albums-list-selectable";
-import PhotoNavigator from "../contexts/photos/components/photo-navigator";
-import type { Photo } from "../contexts/photos/models/photo";
 import useAlbums from "../contexts/albums/hooks/use-albums";
+import PhotoNavigator from "../contexts/photos/components/photo-navigator";
+import { usePhoto } from "../contexts/photos/hooks/use-photo";
+import type { Photo } from "../contexts/photos/models/photo";
 
 export default function PagePhotoDetail() {
   const { id } = useParams();
+  const { photo, isLoadingPhoto, previousPhotoId, nextPhotoId } = usePhoto(id);
   const { albums, isLoadingAlbums } = useAlbums();
-  const isloadingPage = false;
-  const photo = {
-    id: "1",
-    title: "Testes 1",
-    imageId: "portrait-shadow.png",
-    albums: [
-      { id: "1", title: "Album 1" },
-      { id: "2", title: "Album 2" },
-      { id: "3", title: "Album 3" },
-    ],
-  } as Photo;
+
+  if (!isLoadingPhoto && !photo) {
+    return <div>Foto não encontrada</div>;
+  }
 
   return (
     <Container>
       <header className="flex items-center justify-between gap-8 mb-8">
-        {!isloadingPage ? (
-          <Text variant="heading-large">{photo.title}</Text>
+        {!isLoadingPhoto ? (
+          <Text variant="heading-large">{photo?.title}</Text>
         ) : (
           <Skeleton className="w-48 h-8" />
         )}
-        <PhotoNavigator />
+        <PhotoNavigator
+          loading={isLoadingPhoto}
+          previousPhotoId={previousPhotoId}
+          nextPhotoId={nextPhotoId}
+        />
       </header>
       <div className="grid grid-cols-[21rem_1fr] gap-24">
         <div className="space-y-3">
-          {!isloadingPage ? (
+          {!isLoadingPhoto ? (
             <ImageFilePreview
-              src={`/images/${photo?.imageId}`}
+              src={`${import.meta.env.VITE_IMAGES_URL}/${photo?.imageId}`}
               title={photo?.title}
               imageClassName="h-[21rem]"
             />
           ) : (
             <Skeleton className="h-[21rem]" />
           )}
-          {!isloadingPage ? (
+          {!isLoadingPhoto ? (
             <Button variant="destructive">Excluir</Button>
           ) : (
             <Skeleton className="w-20 h-10" />
@@ -56,7 +55,7 @@ export default function PagePhotoDetail() {
             Álbuns
           </Text>
           <AlbumListSelectable
-            photo={photo}
+            photo={photo as Photo}
             albums={albums}
             loading={isLoadingAlbums}
           />
