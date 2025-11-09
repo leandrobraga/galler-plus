@@ -9,11 +9,20 @@ import useAlbums from "../contexts/albums/hooks/use-albums";
 import PhotoNavigator from "../contexts/photos/components/photo-navigator";
 import { usePhoto } from "../contexts/photos/hooks/use-photo";
 import type { Photo } from "../contexts/photos/models/photo";
+import { useTransition } from "react";
 
 export default function PagePhotoDetail() {
   const { id } = useParams();
-  const { photo, isLoadingPhoto, previousPhotoId, nextPhotoId } = usePhoto(id);
+  const { photo, isLoadingPhoto, previousPhotoId, nextPhotoId, deletePhoto } =
+    usePhoto(id);
   const { albums, isLoadingAlbums } = useAlbums();
+  const [isDeletingPhoto, setIsDeletingPhoto] = useTransition();
+
+  function handleDeletePhoto() {
+    setIsDeletingPhoto(async () => {
+      await deletePhoto(photo!.id);
+    });
+  }
 
   if (!isLoadingPhoto && !photo) {
     return <div>Foto não encontrada</div>;
@@ -45,7 +54,13 @@ export default function PagePhotoDetail() {
             <Skeleton className="h-[21rem]" />
           )}
           {!isLoadingPhoto ? (
-            <Button variant="destructive">Excluir</Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeletePhoto}
+              disabled={isDeletingPhoto}
+            >
+              {isDeletingPhoto ? "Excluindo..." : "Excluir"}
+            </Button>
           ) : (
             <Skeleton className="w-20 h-10" />
           )}
